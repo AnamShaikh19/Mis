@@ -4,7 +4,7 @@ using Models.Identity;
 
 namespace DataAccess.Data
 {
-    public class AppIdentityDbContext : IdentityDbContext<AppUser>
+    public class AppIdentityDbContext : IdentityDbContext
     {
         public AppIdentityDbContext(DbContextOptions<AppIdentityDbContext> option) :base(option)
         {

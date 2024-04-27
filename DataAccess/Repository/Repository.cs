@@ -1,5 +1,7 @@
 using DataAccess.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
+using System.Web.Mvc;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace DataAccess.Repository
 {
@@ -18,14 +20,25 @@ namespace DataAccess.Repository
             _dbSet.Add(entity);
         }
 
-        public T Get(System.Linq.Expressions.Expression<Func<T, bool>> filter, string? includeProperties = null)
+        public T Get(System.Linq.Expressions.Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = false)
         {
-            IQueryable<T> query = _dbSet;
-            
-            query = query.Where(filter);
-            if(!string.IsNullOrEmpty(includeProperties))
+            IQueryable<T> query;
+
+            if (tracked)
             {
-                foreach(var includporp in includeProperties
+                    query = _dbSet;
+
+            }
+            else
+            {
+                query = _dbSet.AsNoTracking();
+
+                
+            }
+            query = query.Where(filter);
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach (var includporp in includeProperties
                     .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
                 {
                     query = query.Include(includporp);
@@ -34,10 +47,16 @@ namespace DataAccess.Repository
             return query.FirstOrDefault();
         }
 
-        public IEnumerable<T> GetAll(string? includeProperties = null)
+        public IEnumerable<T> GetAll(System.Linq.Expressions.Expression<Func<T, bool>>? filter, string? includeProperties = null)
         {
             IQueryable<T> query = _dbSet;
-            if(!string.IsNullOrEmpty(includeProperties))
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            if (!string.IsNullOrEmpty(includeProperties))
             {
                 foreach(var includporp in includeProperties
                     .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))

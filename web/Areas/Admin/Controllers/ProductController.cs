@@ -7,6 +7,8 @@ using Models.ViewModels;
 namespace Web.Areas.Admin.Controllers
 {
      [Area("Admin")]
+    //[Authorize(Roles = SD.Role_Admin)]
+
     public class ProductController : Controller
     {
         private readonly IWebHostEnvironment _webHostEnviroment;
